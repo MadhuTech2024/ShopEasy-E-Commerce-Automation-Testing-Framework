@@ -1,0 +1,38 @@
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-container label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.sort-container select {
+  min-width: 190px;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #222;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}
+
+.sort-container select:focus {
+  border-color: #111;
+}
+
+@media (max-width: 600px) {
+  .sort-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sort-container select {
+    min-width: 170px;
+  }
+}

@@ -1,0 +1,183 @@
+.category-navigation {
+  width: 100%;
+
+  padding: 25px 20px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.category-navigation-container {
+  width: 100%;
+  max-width: 1280px;
+
+  margin: 0 auto;
+}
+
+/* Header */
+
+.category-navigation-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+}
+
+.category-small-title {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #6366f1;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.category-navigation-header h2 {
+  margin: 0;
+
+  color: #111827;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.category-count {
+  color: #9ca3af;
+
+  font-size: 12px;
+}
+
+/* Category list */
+
+.category-list {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+}
+
+.category-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Category button */
+
+.category-button {
+  height: 42px;
+
+  padding: 0 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #4b5563;
+
+  font-family: inherit;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.category-button:hover {
+  border-color: #6366f1;
+
+  color: #6366f1;
+
+  transform: translateY(-1px);
+}
+
+/* Active */
+
+.category-button.active {
+  border-color: #6366f1;
+
+  background: #6366f1;
+
+  color: #ffffff;
+
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
+}
+
+/* All categories */
+
+.category-menu-icon {
+  font-size: 18px;
+
+  line-height: 1;
+}
+
+.category-arrow {
+  font-size: 17px;
+
+  line-height: 1;
+
+  transition: transform 0.2s ease;
+}
+
+.category-button:hover .category-arrow {
+  transform: translateX(2px);
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+  .category-navigation {
+    padding: 20px 16px;
+  }
+
+  .category-navigation-header {
+    margin-bottom: 14px;
+  }
+
+  .category-navigation-header h2 {
+    font-size: 17px;
+  }
+
+  .category-count {
+    font-size: 10px;
+  }
+
+  .category-list {
+    gap: 8px;
+  }
+
+  .category-button {
+    height: 39px;
+
+    padding: 0 13px;
+
+    font-size: 11px;
+  }
+}
