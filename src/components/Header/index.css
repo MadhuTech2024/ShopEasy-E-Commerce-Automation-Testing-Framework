@@ -1,6 +1,6 @@
-/* =========================
+/* ========================================
    HEADER
-========================= */
+======================================== */
 
 .header {
   position: sticky;
@@ -9,124 +9,121 @@
 
   width: 100%;
 
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid #e8ebe5;
 
-  border-bottom: 1px solid #e5e7eb;
-
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
-
-/* =========================
-   HEADER CONTAINER
-========================= */
 
 .header-container {
   width: 100%;
   max-width: 1280px;
-
-  height: 72px;
+  height: 76px;
 
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 24px;
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 35px;
 }
 
-/* =========================
+/* ========================================
    LOGO
-========================= */
+======================================== */
 
 .logo {
-  color: #111827;
+  flex-shrink: 0;
+
+  color: #111111;
+  text-decoration: none;
 
   font-size: 25px;
   font-weight: 800;
+  letter-spacing: -1.2px;
 
-  letter-spacing: -0.8px;
-
-  text-decoration: none;
-
-  white-space: nowrap;
+  transition: transform 0.25s ease;
 }
 
 .logo span {
-  color: #6366f1;
+  color: #7caf32;
 }
 
-/* =========================
+.logo:hover {
+  transform: translateY(-1px);
+}
+
+/* ========================================
    DESKTOP NAVIGATION
-========================= */
+======================================== */
 
 .desktop-navigation {
   display: flex;
   align-items: center;
+  gap: 7px;
 
-  gap: 30px;
+  margin-left: auto;
 }
 
 .nav-link {
   position: relative;
 
-  color: #4b5563;
+  padding: 10px 13px;
+
+  color: #656b62;
+  text-decoration: none;
 
   font-size: 14px;
   font-weight: 600;
 
-  text-decoration: none;
+  border-radius: 9px;
 
-  transition: color 0.2s ease;
+  transition:
+    color 0.25s ease,
+    background 0.25s ease;
 }
 
 .nav-link::after {
   content: '';
 
   position: absolute;
-
-  left: 0;
-  bottom: -8px;
+  left: 50%;
+  bottom: 4px;
 
   width: 0;
   height: 2px;
 
-  background: #6366f1;
-
+  background: #8bc43f;
   border-radius: 10px;
 
-  transition: width 0.2s ease;
+  transform: translateX(-50%);
+
+  transition: width 0.25s ease;
 }
 
 .nav-link:hover {
-  color: #6366f1;
+  color: #111111;
+  background: #f5f8f1;
 }
 
 .nav-link:hover::after {
-  width: 100%;
+  width: 18px;
 }
 
-.nav-link.active {
-  color: #6366f1;
-}
-
-.nav-link.active::after {
-  width: 100%;
-}
-
-/* =========================
+/* ========================================
    HEADER ACTIONS
-========================= */
+======================================== */
 
 .header-actions {
   display: flex;
   align-items: center;
-
-  gap: 9px;
+  gap: 10px;
 }
 
-/* =========================
-   ICON BUTTON
-========================= */
+/* ========================================
+   SEARCH BUTTON
+======================================== */
 
 .icon-button {
   width: 42px;
@@ -136,24 +133,27 @@
   align-items: center;
   justify-content: center;
 
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  padding: 0;
 
-  background: #ffffff;
+  background: #f6f7f4;
+  border: 1px solid #e7eae3;
+  border-radius: 11px;
 
-  color: #374151;
+  color: #333831;
 
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .icon-button:hover {
-  color: #6366f1;
+  background: #edffd3;
+  border-color: #c8ef8d;
 
-  border-color: #6366f1;
-
-  background: #f5f3ff;
+  transform: translateY(-2px);
 }
 
 .header-icon {
@@ -161,118 +161,123 @@
   height: 19px;
 }
 
-/* =========================
+/* ========================================
    AUTH BUTTONS
-========================= */
+======================================== */
 
 .auth-buttons {
   display: flex;
   align-items: center;
-
   gap: 8px;
 }
 
 .login-button,
 .signup-button {
   height: 42px;
+  padding: 0 17px;
+  box-sizing: border-box;
 
-  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   border-radius: 10px;
-
-  font-size: 14px;
-  font-weight: 600;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
 
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-/* Login */
-
 .login-button {
-  border: 1px solid #e5e7eb;
-
-  background: #ffffff;
-
-  color: #374151;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #343932;
+  text-decoration: none;
 }
 
 .login-button:hover {
-  border-color: #6366f1;
+  background: #f4f7f0;
+  border-color: #e2e7dd;
 
-  color: #6366f1;
-
-  background: #f5f3ff;
+  transform: translateY(-2px);
 }
 
-/* Sign Up */
-
 .signup-button {
-  border: 1px solid #6366f1;
-
-  background: #6366f1;
-
+  background: #111111;
+  border: 1px solid #111111;
   color: #ffffff;
+  text-decoration: none;
+
+  box-shadow: 0 7px 18px rgba(17, 17, 17, 0.12);
 }
 
 .signup-button:hover {
-  border-color: #4f46e5;
+  background: #7caf32;
+  border-color: #7caf32;
 
-  background: #4f46e5;
+  transform: translateY(-2px);
 
-  transform: translateY(-1px);
+  box-shadow: 0 9px 22px rgba(124, 175, 50, 0.2);
 }
 
-/* =========================
+/* ========================================
    CART
-========================= */
+======================================== */
 
 .cart-button {
   position: relative;
 
-  min-width: 42px;
   height: 42px;
 
-  padding: 0 14px;
+  padding: 0 13px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
-
   gap: 8px;
 
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  background: #f6f7f4;
+  border: 1px solid #e7eae3;
+  border-radius: 11px;
 
-  background: #ffffff;
+  color: #222720;
 
-  color: #374151;
-
-  font-size: 14px;
-  font-weight: 600;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
 
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .cart-button:hover {
-  color: #6366f1;
+  background: #edffd3;
+  border-color: #c8ef8d;
 
-  border-color: #6366f1;
+  transform: translateY(-2px);
+}
 
-  background: #f5f3ff;
+.cart-text {
+  display: inline-block;
 }
 
 .cart-count {
-  position: absolute;
-
-  top: -7px;
-  right: -7px;
-
-  min-width: 20px;
-  height: 20px;
+  min-width: 21px;
+  height: 21px;
 
   padding: 0 5px;
 
@@ -280,19 +285,18 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 50%;
+  background: #b8ff5a;
+  border-radius: 50px;
 
-  background: #6366f1;
-
-  color: #ffffff;
+  color: #111111;
 
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-/* =========================
+/* ========================================
    MOBILE MENU BUTTON
-========================= */
+======================================== */
 
 .menu-button {
   display: none;
@@ -300,33 +304,44 @@
   width: 42px;
   height: 42px;
 
-  padding: 8px;
+  padding: 0;
 
-  border: 1px solid #e5e7eb;
-
-  border-radius: 10px;
-
-  background: #ffffff;
+  background: #f6f7f4;
+  border: 1px solid #e7eae3;
+  border-radius: 11px;
 
   cursor: pointer;
+
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.menu-button:hover {
+  background: #edffd3;
+  border-color: #c8ef8d;
 }
 
 .menu-button span {
   display: block;
 
-  width: 100%;
+  width: 19px;
   height: 2px;
 
-  margin: 5px 0;
+  background: #222720;
+  border-radius: 5px;
 
-  background: #374151;
-
-  border-radius: 10px;
-
-  transition: all 0.25s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
-/* Hamburger → X */
+/* Hamburger animation */
 
 .menu-button.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
@@ -340,210 +355,241 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* =========================
+/* ========================================
    MOBILE NAVIGATION
-========================= */
+======================================== */
 
 .mobile-navigation {
   display: none;
 }
 
-/* =========================
+/* ========================================
    TABLET
-========================= */
+======================================== */
 
-@media (max-width: 1100px) {
+@media (max-width: 1050px) {
   .header-container {
-    padding: 0 22px;
+    gap: 20px;
   }
 
   .desktop-navigation {
-    gap: 18px;
+    gap: 2px;
   }
 
   .nav-link {
+    padding: 9px 9px;
     font-size: 13px;
+  }
+
+  .auth-buttons {
+    gap: 4px;
   }
 
   .login-button,
   .signup-button {
-    padding: 0 12px;
+    padding: 0 13px;
   }
 }
 
-/* =========================
+/* ========================================
    MOBILE
-========================= */
+======================================== */
 
-@media (max-width: 768px) {
+@media (max-width: 850px) {
   .header-container {
-    height: 64px;
-
-    padding: 0 16px;
+    height: 70px;
+    padding: 0 18px;
   }
-
-  /* Hide desktop navigation */
 
   .desktop-navigation {
     display: none;
   }
-
-  /* Hide desktop auth */
 
   .auth-buttons {
     display: none;
   }
 
-  /* Search */
-
-  .icon-button {
-    width: 40px;
-    height: 40px;
+  .menu-button {
+    display: flex;
   }
 
-  /* Cart */
+  .header-actions {
+    margin-left: auto;
+  }
+
+  .mobile-navigation {
+    position: absolute;
+    top: 70px;
+    left: 0;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 12px 18px 20px;
+
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom: 1px solid #e5e9e0;
+
+    box-shadow: 0 18px 35px rgba(25, 35, 20, 0.08);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateY(-10px);
+
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .mobile-navigation.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translateY(0);
+  }
+
+  .mobile-navigation > a {
+    width: 100%;
+
+    padding: 14px 15px;
+
+    color: #3f463c;
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 650;
+
+    border-radius: 10px;
+
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .mobile-navigation > a:hover {
+    background: #f1f8e9;
+    color: #111111;
+  }
+
+  /* Mobile authentication */
+
+  .mobile-auth {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 10px;
+    padding-top: 15px;
+
+    border-top: 1px solid #edf0ea;
+  }
+
+  .mobile-login-button,
+  .mobile-signup-button {
+    height: 45px;
+
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+  }
+
+  .mobile-login-button {
+    background: #f6f8f3;
+    border: 1px solid #e1e6dc;
+
+    color: #252a22;
+  }
+
+  .mobile-signup-button {
+    background: #111111;
+    border: 1px solid #111111;
+
+    color: #ffffff;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 500px) {
+  .header-container {
+    padding: 0 14px;
+  }
+
+  .logo {
+    font-size: 22px;
+  }
+
+  .icon-button,
+  .cart-button,
+  .menu-button {
+    width: 39px;
+    height: 39px;
+  }
 
   .cart-button {
-    width: 40px;
-
     padding: 0;
+
+    justify-content: center;
+    gap: 5px;
   }
 
   .cart-text {
     display: none;
   }
 
-  /* Hamburger */
+  .cart-count {
+    position: absolute;
 
-  .menu-button {
-    display: block;
-  }
+    top: -5px;
+    right: -5px;
 
-  /* Mobile navigation */
+    min-width: 18px;
+    height: 18px;
 
-  .mobile-navigation {
-    width: 100%;
+    font-size: 9px;
 
-    display: flex;
-
-    flex-direction: column;
-
-    max-height: 0;
-
-    overflow: hidden;
-
-    background: #ffffff;
-
-    border-top: 1px solid transparent;
-
-    transition:
-      max-height 0.3s ease,
-      border-color 0.3s ease;
-  }
-
-  .mobile-navigation.show {
-    max-height: 500px;
-
-    border-top-color: #e5e7eb;
-  }
-
-  .mobile-navigation > a {
-    padding: 15px 20px;
-
-    color: #374151;
-
-    font-size: 15px;
-    font-weight: 600;
-
-    text-decoration: none;
-
-    border-bottom: 1px solid #f3f4f6;
-
-    transition:
-      color 0.2s ease,
-      background 0.2s ease;
-  }
-
-  .mobile-navigation > a:hover {
-    color: #6366f1;
-
-    background: #f5f3ff;
-  }
-
-  /* Mobile authentication */
-
-  .mobile-auth {
-    display: flex;
-
-    gap: 10px;
-
-    padding: 16px 20px;
-  }
-
-  .mobile-login-button,
-  .mobile-signup-button {
-    flex: 1;
-
-    height: 44px;
-
-    border-radius: 9px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-  }
-
-  .mobile-login-button {
-    border: 1px solid #e5e7eb;
-
-    background: #ffffff;
-
-    color: #374151;
-  }
-
-  .mobile-login-button:hover {
-    border-color: #6366f1;
-
-    color: #6366f1;
-
-    background: #f5f3ff;
-  }
-
-  .mobile-signup-button {
-    border: 1px solid #6366f1;
-
-    background: #6366f1;
-
-    color: #ffffff;
-  }
-
-  .mobile-signup-button:hover {
-    background: #4f46e5;
-  }
-}
-
-/* =========================
-   SMALL MOBILE
-========================= */
-
-@media (max-width: 420px) {
-  .header-container {
-    padding: 0 12px;
-  }
-
-  .logo {
-    font-size: 21px;
+    border: 2px solid #ffffff;
   }
 
   .header-actions {
-    gap: 6px;
+    gap: 7px;
+  }
+}
+
+/* ========================================
+   VERY SMALL DEVICES
+======================================== */
+
+@media (max-width: 360px) {
+  .header-container {
+    padding: 0 10px;
+  }
+
+  .logo {
+    font-size: 20px;
   }
 
   .icon-button,
   .cart-button,
   .menu-button {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-actions {
+    gap: 5px;
   }
 }

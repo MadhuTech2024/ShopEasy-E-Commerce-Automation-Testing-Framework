@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import {Link} from 'react-router'
+import { formatUsdAsInr } from '../../utils/currency';
 
 import {useCart} from '../../context/CartContext'
 
@@ -107,12 +108,12 @@ const ProductCard = ({product}) => {
         <div className="product-price-container">
           <div className="product-prices">
             <span className="product-price">
-              ${price}
+              {formatUsdAsInr(price)}
             </span>
 
             {discountPercentage > 0 && (
               <span className="original-price">
-                ${originalPrice}
+                {formatUsdAsInr(originalPrice)}
               </span>
             )}
           </div>

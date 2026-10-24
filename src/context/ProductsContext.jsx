@@ -13,20 +13,19 @@ import {
   parentCategoryMap,
 } from '../config/categoryConfig'
 
-const ProductsContext = createContext(null)
+// Export ProductsContext as a named export
+export const ProductsContext = createContext(null)
 
 const DEFAULT_MIN_PRICE = 0
 const DEFAULT_MAX_PRICE = 5000
 const DEFAULT_MIN_RATING = 0
 
-const ProductsProvider = ({children}) => {
+// Export ProductsProvider as a named export
+export const ProductsProvider = ({children}) => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [sortOption, setSortOption] = useState('relevance')
-  
-  
-
 
   // Search
   const [searchQuery, setSearchQuery] = useState('')
@@ -68,91 +67,92 @@ const ProductsProvider = ({children}) => {
   // FILTER PRODUCTS
   // ---------------------------------------
 
-const filteredProducts = useMemo(() => {
-  const search = searchQuery.trim().toLowerCase()
+  const filteredProducts = useMemo(() => {
+    const search = searchQuery.trim().toLowerCase()
 
-  const filtered = products.filter(product => {
-    // SEARCH
-    const matchesSearch =
-      search === '' ||
-      product.name?.toLowerCase().includes(search) ||
-      product.description?.toLowerCase().includes(search) ||
-      product.category?.toLowerCase().includes(search) ||
-      product.brand?.toLowerCase().includes(search)
+    const filtered = products.filter(product => {
+      // SEARCH
+      const matchesSearch =
+        search === '' ||
+        product.name?.toLowerCase().includes(search) ||
+        product.description?.toLowerCase().includes(search) ||
+        product.category?.toLowerCase().includes(search) ||
+        product.brand?.toLowerCase().includes(search)
 
-    // CATEGORY
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.some(selectedCategory => {
-        if (parentCategoryMap[selectedCategory]) {
-          return parentCategoryMap[selectedCategory].includes(
-            product.category,
-          )
-        }
+      // CATEGORY
+      const matchesCategory =
+        selectedCategories.length === 0 ||
+        selectedCategories.some(selectedCategory => {
+          if (parentCategoryMap[selectedCategory]) {
+            return parentCategoryMap[selectedCategory].includes(
+              product.category,
+            )
+          }
 
-        if (subcategoryMap[selectedCategory]) {
-          return subcategoryMap[selectedCategory].includes(
-            product.category,
-          )
-        }
+          if (subcategoryMap[selectedCategory]) {
+            return subcategoryMap[selectedCategory].includes(
+              product.category,
+            )
+          }
 
-        return false
-      })
+          return false
+        })
 
-    // PRICE
-    const matchesPrice =
-      Number(product.price) >= minPrice &&
-      Number(product.price) <= maxPrice
+      // PRICE
+      const matchesPrice =
+        Number(product.price) >= minPrice &&
+        Number(product.price) <= maxPrice
 
-    // RATING
-    const matchesRating =
-      Number(product.rating) >= minRating
+      // RATING
+      const matchesRating =
+        Number(product.rating) >= minRating
 
-    return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesPrice &&
-      matchesRating
-    )
-  })
-
-  // SORTING
-  switch (sortOption) {
-    case 'price-low-high':
-      return [...filtered].sort(
-        (a, b) => Number(a.price) - Number(b.price),
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesPrice &&
+        matchesRating
       )
+    })
 
-    case 'price-high-low':
-      return [...filtered].sort(
-        (a, b) => Number(b.price) - Number(a.price),
-      )
+    // SORTING
+    switch (sortOption) {
+      case 'price-low-high':
+        return [...filtered].sort(
+          (a, b) => Number(a.price) - Number(b.price),
+        )
 
-    case 'rating-high-low':
-      return [...filtered].sort(
-        (a, b) => Number(b.rating) - Number(a.rating),
-      )
+      case 'price-high-low':
+        return [...filtered].sort(
+          (a, b) => Number(b.price) - Number(a.price),
+        )
 
-    case 'discount-high-low':
-      return [...filtered].sort(
-        (a, b) =>
-          Number(b.discountPercentage) -
-          Number(a.discountPercentage),
-      )
+      case 'rating-high-low':
+        return [...filtered].sort(
+          (a, b) => Number(b.rating) - Number(a.rating),
+        )
 
-    case 'relevance':
-    default:
-      return filtered
-  }
-}, [
-  products,
-  searchQuery,
-  selectedCategories,
-  minPrice,
-  maxPrice,
-  minRating,
-  sortOption,
-])
+      case 'discount-high-low':
+        return [...filtered].sort(
+          (a, b) =>
+            Number(b.discountPercentage) -
+            Number(a.discountPercentage),
+        )
+
+      case 'relevance':
+      default:
+        return filtered
+    }
+  }, [
+    products,
+    searchQuery,
+    selectedCategories,
+    minPrice,
+    maxPrice,
+    minRating,
+    sortOption,
+  ])
+
   // ---------------------------------------
   // SELECT CATEGORY
   // ---------------------------------------
@@ -204,36 +204,36 @@ const filteredProducts = useMemo(() => {
   return (
     <ProductsContext.Provider
       value={{
-  products,
-  filteredProducts,
+        products,
+        filteredProducts,
 
-  loading,
-  error,
+        loading,
+        error,
 
-  searchQuery,
-  setSearchQuery,
+        searchQuery,
+        setSearchQuery,
 
-  selectedCategories,
-  setSelectedCategories,
-  selectCategory,
-  toggleCategory,
+        selectedCategories,
+        setSelectedCategories,
+        selectCategory,
+        toggleCategory,
 
-  minPrice,
-  setMinPrice,
+        minPrice,
+        setMinPrice,
 
-  maxPrice,
-  setMaxPrice,
+        maxPrice,
+        setMaxPrice,
 
-  minRating,
-  setMinRating,
+        minRating,
+        setMinRating,
 
-  sortOption,
-  setSortOption,
+        sortOption,
+        setSortOption,
 
-  activeFilterCount,
+        activeFilterCount,
 
-  clearFilters,
-}}
+        clearFilters,
+      }}
     >
       {children}
     </ProductsContext.Provider>

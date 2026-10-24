@@ -1,34 +1,104 @@
-import {useState} from 'react'
-import {Link, useNavigate} from 'react-router'
 
-import {useCart} from '../../context/CartContext'
-
+import { useState, useContext, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { AuthContext } from '../../context/AuthContext'
+import { createOrderApi } from '../../services/orders'
+import { useCart } from '../../context/CartContext'
 import './index.css'
 
 const Checkout = () => {
   const navigate = useNavigate()
 
-  const {
-    cartItems,
-    cartTotal,
-    clearCart,
-  } = useCart()
+  const { user, loading: authLoading } = useContext(AuthContext)
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
-  })
+  const { cartItems, cartTotal, clearCart } = useCart()
 
+const [formData, setFormData] = useState(() => {
+  const savedProfile = localStorage.getItem(
+    `shopeasy_profile_${user?.id}`
+  );
+
+  let delivery = {};
+
+  try {
+    delivery = savedProfile ? JSON.parse(savedProfile) : {};
+  } catch {
+    delivery = {};
+  }
+
+  return {
+    firstName: user?.name?.split(' ')[0] || '',
+    lastName: user?.name?.split(' ').slice(1).join(' ') || '',
+    email: user?.email || '',
+    phone: delivery.phone || '',
+    address: delivery.address || '',
+    city: delivery.city || '',
+    state: delivery.state || '',
+    pincode: delivery.pincode || '',
+  };
+});
+useEffect(() => {
+  if (!user) return;
+
+  let delivery = {};
+
+  try {
+    delivery = JSON.parse(
+      localStorage.getItem(`shopeasy_profile_${user.id}`) || '{}'
+    );
+  } catch {
+    delivery = {};
+  }
+
+  setFormData((previous) => ({
+    ...previous,
+    firstName: previous.firstName || user.name?.split(' ')[0] || '',
+    lastName:
+      previous.lastName ||
+      user.name?.split(' ').slice(1).join(' ') ||
+      '',
+    email: previous.email || user.email || '',
+    phone: previous.phone || delivery.phone || '',
+    address: previous.address || delivery.address || '',
+    city: previous.city || delivery.city || '',
+    state: previous.state || delivery.state || '',
+    pincode: previous.pincode || delivery.pincode || '',
+  }));
+}, [user]);
+
+  const [paymentMethod, setPaymentMethod] = useState('cod')
   const [errors, setErrors] = useState({})
+  const [placingOrder, setPlacingOrder] = useState(false)
+  const [orderError, setOrderError] = useState('')
+
+  // Redirect users who are not logged in.
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login?redirect=%2Fcheckout', {
+        replace: true,
+      })
+    }
+  }, [authLoading, user, navigate])
+
+  // Pre-fill details available from the logged-in account.
+  useEffect(() => {
+    if (!user) return
+
+    const nameParts = (user.name || '').trim().split(/\s+/)
+
+    setFormData(previous => ({
+      ...previous,
+      firstName: previous.firstName || nameParts[0] || '',
+      lastName:
+        previous.lastName ||
+        nameParts.slice(1).join(' ') ||
+        '',
+      email: previous.email || user.email || '',
+    }))
+  }, [user])
 
   const handleChange = event => {
-    const {name, value} = event.target
+    const { name, value } = event.target
 
     setFormData(previous => ({
       ...previous,
@@ -39,6 +109,8 @@ const Checkout = () => {
       ...previous,
       [name]: '',
     }))
+
+    setOrderError('')
   }
 
   const validateForm = () => {
@@ -54,19 +126,14 @@ const Checkout = () => {
 
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-        formData.email,
-      )
-    ) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       newErrors.email = 'Enter a valid email address'
     }
 
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required'
-    } else if (!/^\d{10}$/.test(formData.phone)) {
-      newErrors.phone =
-        'Enter a valid 10-digit phone number'
+    } else if (!/^\d{10}$/.test(formData.phone.trim())) {
+      newErrors.phone = 'Enter a valid 10-digit phone number'
     }
 
     if (!formData.address.trim()) {
@@ -83,9 +150,8 @@ const Checkout = () => {
 
     if (!formData.pincode.trim()) {
       newErrors.pincode = 'PIN code is required'
-    } else if (!/^\d{6}$/.test(formData.pincode)) {
-      newErrors.pincode =
-        'Enter a valid 6-digit PIN code'
+    } else if (!/^\d{6}$/.test(formData.pincode.trim())) {
+      newErrors.pincode = 'Enter a valid 6-digit PIN code'
     }
 
     setErrors(newErrors)
@@ -93,18 +159,110 @@ const Checkout = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handlePlaceOrder = event => {
+  const handlePlaceOrder = async event => {
     event.preventDefault()
+    setOrderError('')
 
-    const isValid = validateForm()
+    if (placingOrder || authLoading) return
 
-    if (!isValid) {
+    if (!user) {
+      navigate('/login?redirect=%2Fcheckout')
       return
     }
 
-    clearCart()
+    if (cartItems.length === 0) {
+      setOrderError('Your cart is empty.')
+      return
+    }
 
-    navigate('/order-success')
+    // Validate every required field before calling the API.
+    if (!validateForm()) {
+      setOrderError('Please correct the highlighted fields.')
+      return
+    }
+    localStorage.setItem(
+  `shopeasy_profile_${user.id}`,
+  JSON.stringify({
+    phone: formData.phone,
+    address: formData.address,
+    city: formData.city,
+    state: formData.state,
+    pincode: formData.pincode,
+  })
+);
+
+    const orderData = {
+      ...formData,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      address: formData.address.trim(),
+      city: formData.city.trim(),
+      state: formData.state.trim(),
+      pincode: formData.pincode.trim(),
+      paymentMethod,
+      items: cartItems.map(item => ({
+        id: item.id,
+        quantity: Number(item.quantity),
+      })),
+    }
+
+    try {
+      setPlacingOrder(true)
+
+      // The API should send the JWT token to the backend.
+      // The backend must save the order to PostgreSQL.
+      const result = await createOrderApi(orderData)
+
+      // Clear the cart only after a successful response.
+      clearCart()
+
+      navigate('/order-success', {
+        state: {
+          order: result.order || result,
+        },
+        replace: true,
+      })
+    } catch (error) {
+      if (error.status === 401) {
+        navigate('/login?redirect=%2Fcheckout')
+        return
+      }
+
+      setOrderError(
+        error.message || 'Order failed. Please try again.',
+      )
+    } finally {
+      setPlacingOrder(false)
+    }
+  }
+
+  if (authLoading) {
+    return (
+      <main className="checkout-page">
+        <div className="checkout-empty">
+          <p>Checking your account...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (!user) {
+    return (
+      <main className="checkout-page">
+        <div className="checkout-empty">
+          <h1>Login required</h1>
+          <p>Please log in to continue to checkout.</p>
+          <Link
+            to="/login?redirect=%2Fcheckout"
+            className="checkout-back-button"
+          >
+            Login
+          </Link>
+        </div>
+      </main>
+    )
   }
 
   if (cartItems.length === 0) {
@@ -112,16 +270,8 @@ const Checkout = () => {
       <main className="checkout-page">
         <div className="checkout-empty">
           <h1>Your cart is empty</h1>
-
-          <p>
-            Add some products before proceeding to
-            checkout.
-          </p>
-
-          <Link
-            to="/"
-            className="checkout-back-button"
-          >
+          <p>Add some products before proceeding to checkout.</p>
+          <Link to="/" className="checkout-back-button">
             Continue Shopping
           </Link>
         </div>
@@ -129,31 +279,28 @@ const Checkout = () => {
     )
   }
 
+  const renderError = name =>
+    errors[name] ? (
+      <p className="form-error">{errors[name]}</p>
+    ) : null
+
   return (
     <main className="checkout-page">
       <div className="checkout-container">
         <div className="checkout-header">
-          <Link
-            to="/cart"
-            className="checkout-back-link"
-          >
+          <Link to="/cart" className="checkout-back-link">
             ← Back to Cart
           </Link>
 
-          <p className="checkout-label">
-            SECURE CHECKOUT
-          </p>
-
+          <p className="checkout-label">SECURE CHECKOUT</p>
           <h1>Checkout</h1>
-
-          <p>
-            Complete your details to place your order.
-          </p>
+          <p>Complete your details to place your order.</p>
         </div>
 
         <form
           className="checkout-content"
           onSubmit={handlePlaceOrder}
+          noValidate
         >
           <section className="customer-details">
             <div className="checkout-section">
@@ -161,10 +308,7 @@ const Checkout = () => {
 
               <div className="form-grid">
                 <div className="form-group">
-                  <label htmlFor="firstName">
-                    First Name
-                  </label>
-
+                  <label htmlFor="firstName">First Name</label>
                   <input
                     id="firstName"
                     name="firstName"
@@ -173,19 +317,11 @@ const Checkout = () => {
                     onChange={handleChange}
                     placeholder="Enter first name"
                   />
-
-                  {errors.firstName && (
-                    <p className="form-error">
-                      {errors.firstName}
-                    </p>
-                  )}
+                  {renderError('firstName')}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="lastName">
-                    Last Name
-                  </label>
-
+                  <label htmlFor="lastName">Last Name</label>
                   <input
                     id="lastName"
                     name="lastName"
@@ -194,19 +330,11 @@ const Checkout = () => {
                     onChange={handleChange}
                     placeholder="Enter last name"
                   />
-
-                  {errors.lastName && (
-                    <p className="form-error">
-                      {errors.lastName}
-                    </p>
-                  )}
+                  {renderError('lastName')}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">
-                    Email Address
-                  </label>
-
+                  <label htmlFor="email">Email Address</label>
                   <input
                     id="email"
                     name="email"
@@ -215,33 +343,22 @@ const Checkout = () => {
                     onChange={handleChange}
                     placeholder="you@example.com"
                   />
-
-                  {errors.email && (
-                    <p className="form-error">
-                      {errors.email}
-                    </p>
-                  )}
+                  {renderError('email')}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="phone">
-                    Phone Number
-                  </label>
-
+                  <label htmlFor="phone">Phone Number</label>
                   <input
                     id="phone"
                     name="phone"
                     type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="10-digit phone number"
                   />
-
-                  {errors.phone && (
-                    <p className="form-error">
-                      {errors.phone}
-                    </p>
-                  )}
+                  {renderError('phone')}
                 </div>
               </div>
             </div>
@@ -250,32 +367,21 @@ const Checkout = () => {
               <h2>Delivery Address</h2>
 
               <div className="form-group full-width">
-                <label htmlFor="address">
-                  Address
-                </label>
-
+                <label htmlFor="address">Address</label>
                 <textarea
                   id="address"
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
                   placeholder="Enter your full address"
-                  rows="4"
+                  rows={4}
                 />
-
-                {errors.address && (
-                  <p className="form-error">
-                    {errors.address}
-                  </p>
-                )}
+                {renderError('address')}
               </div>
 
               <div className="form-grid">
                 <div className="form-group">
-                  <label htmlFor="city">
-                    City
-                  </label>
-
+                  <label htmlFor="city">City</label>
                   <input
                     id="city"
                     name="city"
@@ -284,19 +390,11 @@ const Checkout = () => {
                     onChange={handleChange}
                     placeholder="City"
                   />
-
-                  {errors.city && (
-                    <p className="form-error">
-                      {errors.city}
-                    </p>
-                  )}
+                  {renderError('city')}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="state">
-                    State
-                  </label>
-
+                  <label htmlFor="state">State</label>
                   <input
                     id="state"
                     name="state"
@@ -305,34 +403,22 @@ const Checkout = () => {
                     onChange={handleChange}
                     placeholder="State"
                   />
-
-                  {errors.state && (
-                    <p className="form-error">
-                      {errors.state}
-                    </p>
-                  )}
+                  {renderError('state')}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="pincode">
-                    PIN Code
-                  </label>
-
+                  <label htmlFor="pincode">PIN Code</label>
                   <input
                     id="pincode"
                     name="pincode"
                     type="text"
+                    inputMode="numeric"
+                    maxLength={6}
                     value={formData.pincode}
                     onChange={handleChange}
                     placeholder="6-digit PIN code"
-                    maxLength="6"
                   />
-
-                  {errors.pincode && (
-                    <p className="form-error">
-                      {errors.pincode}
-                    </p>
-                  )}
+                  {renderError('pincode')}
                 </div>
               </div>
             </div>
@@ -343,36 +429,33 @@ const Checkout = () => {
               <label className="payment-option">
                 <input
                   type="radio"
-                  name="payment"
+                  name="paymentMethod"
                   value="cod"
-                  defaultChecked
+                  checked={paymentMethod === 'cod'}
+                  onChange={event =>
+                    setPaymentMethod(event.target.value)
+                  }
                 />
-
                 <span>
-                  <strong>
-                    Cash on Delivery
-                  </strong>
-
-                  <small>
-                    Pay when your order arrives
-                  </small>
+                  <strong>Cash on Delivery</strong>
+                  <small>Pay when your order arrives</small>
                 </span>
               </label>
 
               <label className="payment-option">
                 <input
                   type="radio"
-                  name="payment"
+                  name="paymentMethod"
                   value="card"
+                  checked={paymentMethod === 'card'}
+                  onChange={event =>
+                    setPaymentMethod(event.target.value)
+                  }
                 />
-
                 <span>
-                  <strong>
-                    Credit / Debit Card
-                  </strong>
-
+                  <strong>Credit / Debit Card</strong>
                   <small>
-                    Secure card payment
+                    Card payment requires a payment gateway
                   </small>
                 </span>
               </label>
@@ -388,25 +471,19 @@ const Checkout = () => {
                   key={item.id}
                   className="checkout-product"
                 >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                  />
+                  <img src={item.image} alt={item.name} />
 
                   <div>
                     <p>{item.name}</p>
-
                     <span>
-                      {item.quantity} × $
-                      {item.price}
+                      {item.quantity} × ${item.price}
                     </span>
                   </div>
 
                   <strong>
                     $
                     {(
-                      Number(item.price) *
-                      item.quantity
+                      Number(item.price) * item.quantity
                     ).toFixed(2)}
                   </strong>
                 </div>
@@ -417,15 +494,11 @@ const Checkout = () => {
 
             <div className="checkout-total-row">
               <span>Subtotal</span>
-
-              <span>
-                ${Number(cartTotal).toFixed(2)}
-              </span>
+              <span>${Number(cartTotal).toFixed(2)}</span>
             </div>
 
             <div className="checkout-total-row">
               <span>Shipping</span>
-
               <span>Free</span>
             </div>
 
@@ -433,22 +506,25 @@ const Checkout = () => {
 
             <div className="checkout-final-total">
               <span>Total</span>
-
-              <strong>
-                ${Number(cartTotal).toFixed(2)}
-              </strong>
+              <strong>${Number(cartTotal).toFixed(2)}</strong>
             </div>
+
+            {orderError && (
+              <p className="form-error" role="alert">
+                {orderError}
+              </p>
+            )}
 
             <button
               type="submit"
               className="place-order-button"
+              disabled={placingOrder}
             >
-              Place Order
+              {placingOrder ? 'Placing Order...' : 'Place Order'}
             </button>
 
             <p className="secure-message">
-              🔒 Your information is secure and
-              protected.
+              🔒 Your information is secure and protected.
             </p>
           </aside>
         </form>

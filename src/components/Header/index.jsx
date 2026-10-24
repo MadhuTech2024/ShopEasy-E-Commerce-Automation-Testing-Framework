@@ -1,50 +1,63 @@
-import {useState} from 'react'
-import {useCart} from '../../context/CartContext'
-import {useNavigate} from 'react-router'
+
+import { useState, useContext } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { useCart } from '../../context/CartContext'
+import { AuthContext } from '../../context/AuthContext'
 import './index.css'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const {cartItemCount} = useCart()
+
+  const { cartItemCount } = useCart()
+  const { user, logout, loading } = useContext(AuthContext)
   const navigate = useNavigate()
 
+  const closeMenu = () => setIsMenuOpen(false)
+
   const toggleMenu = () => {
-    setIsMenuOpen(prev => !prev)
+    setIsMenuOpen(previous => !previous)
   }
 
-  const closeMenu = () => {
-    setIsMenuOpen(false)
+  const handleSearchClick = () => {
+    navigate('/products')
+    closeMenu()
+  }
+
+  const handleLogout = () => {
+    logout()
+    closeMenu()
+    navigate('/login', { replace: true })
   }
 
   return (
     <header className="header">
       <div className="header-container">
         {/* Logo */}
-        <a href="/" className="logo" onClick={closeMenu}>
+        <Link to="/" className="logo" onClick={closeMenu}>
           Shop<span>Easy</span>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="desktop-navigation">
-          <a href="/" className="nav-link active">
+          <Link to="/" className="nav-link" onClick={closeMenu}>
             Home
-          </a>
+          </Link>
 
-          <a href="#products" className="nav-link">
+          <Link to="/products" className="nav-link" onClick={closeMenu}>
             Products
-          </a>
+          </Link>
 
-          <a href="#categories" className="nav-link">
+          <Link to="/categories" className="nav-link" onClick={closeMenu}>
             Categories
-          </a>
+          </Link>
 
-          <a href="#offers" className="nav-link">
+          <Link to="/offers" className="nav-link" onClick={closeMenu}>
             Offers
-          </a>
+          </Link>
 
-          <a href="#about" className="nav-link">
+          <Link to="/about" className="nav-link" onClick={closeMenu}>
             About
-          </a>
+          </Link>
         </nav>
 
         {/* Header Actions */}
@@ -54,7 +67,7 @@ const Header = () => {
             type="button"
             className="icon-button"
             aria-label="Search products"
-          
+            onClick={handleSearchClick}
           >
             <svg
               className="header-icon"
@@ -69,7 +82,6 @@ const Header = () => {
                 stroke="currentColor"
                 strokeWidth="2"
               />
-
               <path
                 d="M20 20L16.5 16.5"
                 stroke="currentColor"
@@ -77,64 +89,81 @@ const Header = () => {
                 strokeLinecap="round"
               />
             </svg>
-             
           </button>
 
           {/* Authentication */}
           <div className="auth-buttons">
-            <button type="button" className="login-button">
-              Login
-            </button>
+            {!loading && user ? (
+              <>
+                <Link
+                  to="/profile"
+                  className="login-button"
+                  onClick={closeMenu}
+                >
+                  My Profile
+                </Link>
 
-            <button type="button" className="signup-button">
-              Sign Up
-            </button>
+                <button
+                  type="button"
+                  className="signup-button"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </>
+            ) : !loading ? (
+              <>
+                <Link
+                  to="/login"
+                  className="login-button"
+                  onClick={closeMenu}
+                >
+                  Login
+                </Link>
+
+                <Link
+                  to="/signup"
+                  className="signup-button"
+                  onClick={closeMenu}
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : null}
           </div>
 
           {/* Cart */}
-         <button
-  type="button"
-  className="cart-button"
-  aria-label="Shopping cart"
-    onClick={() => navigate('/cart')}
->
-  <svg
-    className="header-icon"
-    viewBox="0 0 24 24"
-    fill="none"
-    aria-hidden="true"
-  >
-    <path
-      d="M3 4H5L7.2 14.4C7.4 15.3 8.2 16 9.2 16H17.5C18.4 16 19.2 15.4 19.5 14.5L21 8H6"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+          <button
+            type="button"
+            className="cart-button"
+            aria-label={`Shopping cart with ${cartItemCount} items`}
+            onClick={() => {
+              navigate('/cart')
+              closeMenu()
+            }}
+          >
+            <svg
+              className="header-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 4H5L7.2 14.4C7.4 15.3 8.2 16 9.2 16H17.5C18.4 16 19.2 15.4 19.5 14.5L21 8H6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="9.5" cy="20" r="1.5" fill="currentColor" />
+              <circle cx="17.5" cy="20" r="1.5" fill="currentColor" />
+            </svg>
 
-    <circle
-      cx="9.5"
-      cy="20"
-      r="1.5"
-      fill="currentColor"
-    />
+            <span className="cart-text">Cart</span>
+            <span className="cart-count">{cartItemCount}</span>
+          </button>
 
-    <circle
-      cx="17.5"
-      cy="20"
-      r="1.5"
-      fill="currentColor"
-    />
-  </svg>
-
-  <span className="cart-text">Cart</span>
-
-  <span className="cart-count">
-    {cartItemCount}
-  </span>
-</button>
-
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu */}
           <button
             type="button"
             className={`menu-button ${isMenuOpen ? 'open' : ''}`}
@@ -154,34 +183,46 @@ const Header = () => {
         className={`mobile-navigation ${isMenuOpen ? 'show' : ''}`}
         aria-hidden={!isMenuOpen}
       >
-        <a href="/" onClick={closeMenu}>
-          Home
-        </a>
-
-        <a href="#products" onClick={closeMenu}>
-          Products
-        </a>
-
-        <a href="#categories" onClick={closeMenu}>
-          Categories
-        </a>
-
-        <a href="#offers" onClick={closeMenu}>
-          Offers
-        </a>
-
-        <a href="#about" onClick={closeMenu}>
-          About
-        </a>
+        <Link to="/" onClick={closeMenu}>Home</Link>
+        <Link to="/products" onClick={closeMenu}>Products</Link>
+        <Link to="/categories" onClick={closeMenu}>Categories</Link>
+        <Link to="/offers" onClick={closeMenu}>Offers</Link>
+        <Link to="/about" onClick={closeMenu}>About</Link>
 
         <div className="mobile-auth">
-          <button type="button" className="mobile-login-button">
-            Login
-          </button>
+          {!loading && user ? (
+            <>
+              <Link to="/profile" onClick={closeMenu}>
+                My Profile
+              </Link>
 
-          <button type="button" className="mobile-signup-button">
-            Sign Up
-          </button>
+              <button
+                type="button"
+                className="mobile-login-button"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </>
+          ) : !loading ? (
+            <>
+              <Link
+                to="/login"
+                className="mobile-login-button"
+                onClick={closeMenu}
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/signup"
+                className="mobile-signup-button"
+                onClick={closeMenu}
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : null}
         </div>
       </nav>
     </header>

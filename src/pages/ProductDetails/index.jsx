@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react'
 import {Link, useParams} from 'react-router'
+import {useCart} from '../../context/CartContext'
+import { formatUsdAsInr } from '../../utils/currency';
 
 import {useProducts} from '../../context/ProductsContext'
 import {getProductById} from '../../services/productService'
@@ -10,6 +12,8 @@ import './index.css'
 
 const ProductDetails = () => {
   const {id} = useParams()
+  const {addToCart} = useCart()
+
 
   const {products} = useProducts()
 
@@ -171,7 +175,7 @@ const ProductDetails = () => {
 
             <div className="details-price-section">
               <span className="details-price">
-                ${product.price}
+                {formatUsdAsInr(product.price)}
               </span>
 
               {product.discountPercentage > 0 && (
@@ -197,12 +201,13 @@ const ProductDetails = () => {
             </div>
 
             <div className="details-actions">
-              <button
-                type="button"
-                className="details-add-cart-button"
-              >
-                🛒 Add to Cart
-              </button>
+          <button
+              type="button"
+              className="details-add-cart-button"
+              onClick={() => addToCart(product)}
+            >
+              🛒 Add to Cart
+            </button>
 
               <button
                 type="button"

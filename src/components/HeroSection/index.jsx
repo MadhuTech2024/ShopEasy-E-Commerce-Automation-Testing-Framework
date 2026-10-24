@@ -1,5 +1,5 @@
 import './index.css'
-
+import {Link} from 'react-router'
 const HeroSection = () => {
   return (
     <section className="hero-section">
@@ -18,14 +18,14 @@ const HeroSection = () => {
           </p>
 
           <div className="hero-actions">
-            <a href="#products" className="hero-primary-button">
+            <Link to="/products" className="hero-primary-button">
               Shop Now
               <span>→</span>
-            </a>
+            </Link>
 
-            <a href="#categories" className="hero-secondary-button">
+            <Link to="/categories" className="hero-secondary-button">
               Explore Categories
-            </a>
+            </Link>
           </div>
 
           <div className="hero-stats">

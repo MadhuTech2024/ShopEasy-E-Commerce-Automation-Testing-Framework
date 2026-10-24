@@ -1,5 +1,5 @@
 
-
+import './index.css'
 const About = () => {
   return (
     <main className="about-page">

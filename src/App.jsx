@@ -4,9 +4,11 @@ import {
   Routes,
   Route,
 } from 'react-router'
+import { AuthProvider } from './context/AuthContext';
 
 import ProductsProvider from './context/ProductsContext'
 import CartProvider from './context/CartContext'
+import Footer from './components/Footer'
 
 import Header from './components/Header'
 
@@ -16,6 +18,10 @@ import Categories from './pages/Categories'
 import Offers from './pages/Offers'
 import About from './pages/About'
 
+import Login from './pages/Login'
+import Signup from './pages/SignUp'
+import Profile from './pages/Profile'
+
 import ProductDetails from './pages/ProductDetails'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
@@ -24,6 +30,7 @@ import OrderSuccess from './pages/OrderSuccess'
 const App = () => {
   return (
     <BrowserRouter>
+    <AuthProvider>
       <ProductsProvider>
         <CartProvider>
           <Header />
@@ -68,14 +75,27 @@ const App = () => {
               path="/checkout"
               element={<Checkout />}
             />
-
+            <Route 
+            path="/login"
+            element={<Login />}
+            />
+            <Route 
+            path="/signup"
+            element={<Signup />}
+            />
+           <Route
+            path="/profile" 
+            element={<Profile />} 
+            />
             <Route
               path="/order-success"
               element={<OrderSuccess />}
             />
           </Routes>
+          <Footer />
         </CartProvider>
       </ProductsProvider>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

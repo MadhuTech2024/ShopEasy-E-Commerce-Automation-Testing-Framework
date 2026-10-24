@@ -1,24 +1,50 @@
+
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
 
-const CartContext = createContext(null)
+export const CartContext = createContext(null)
 
-const CartProvider = ({children}) => {
-  const [cartItems, setCartItems] = useState([])
+const CART_STORAGE_KEY = 'shopeasy_cart'
+
+export const CartProvider = ({ children }) => {
+  // Restore cart items when the application starts.
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY)
+
+      return savedCart ? JSON.parse(savedCart) : []
+    } catch (error) {
+      console.error('Unable to restore cart:', error)
+      return []
+    }
+  })
+
+  // Save cart items whenever they change.
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        CART_STORAGE_KEY,
+        JSON.stringify(cartItems),
+      )
+    } catch (error) {
+      console.error('Unable to save cart:', error)
+    }
+  }, [cartItems])
 
   const addToCart = product => {
     setCartItems(previousItems => {
       const existingItem = previousItems.find(
-        item => item.id === product.id,
+        item => String(item.id) === String(product.id),
       )
 
       if (existingItem) {
         return previousItems.map(item =>
-          item.id === product.id
+          String(item.id) === String(product.id)
             ? {
                 ...item,
                 quantity: item.quantity + 1,
@@ -39,14 +65,16 @@ const CartProvider = ({children}) => {
 
   const removeFromCart = productId => {
     setCartItems(previousItems =>
-      previousItems.filter(item => item.id !== productId),
+      previousItems.filter(
+        item => String(item.id) !== String(productId),
+      ),
     )
   }
 
   const increaseQuantity = productId => {
     setCartItems(previousItems =>
       previousItems.map(item =>
-        item.id === productId
+        String(item.id) === String(productId)
           ? {
               ...item,
               quantity: item.quantity + 1,
@@ -60,7 +88,7 @@ const CartProvider = ({children}) => {
     setCartItems(previousItems =>
       previousItems
         .map(item =>
-          item.id === productId
+          String(item.id) === String(productId)
             ? {
                 ...item,
                 quantity: item.quantity - 1,
