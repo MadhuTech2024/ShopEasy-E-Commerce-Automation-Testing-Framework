@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:5001/api';
+import { API_BASE_URL } from './api';
+
+const API_URL = API_BASE_URL;
 
 export const createOrderApi = async (orderData) => {
   const token = localStorage.getItem('token');

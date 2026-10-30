@@ -182,6 +182,7 @@ npm install
 ### 4. Configure environment variables
 
 Create a `.env` file inside the `backend` directory.
+You can copy `backend/.env.example` and update its values.
 
 Example configuration:
 
@@ -193,10 +194,13 @@ DB_NAME=shopeasy
 DB_USER=your_postgres_username
 DB_PASSWORD=your_postgres_password
 JWT_SECRET=replace_with_a_strong_random_secret
-USD_TO_INR=95
+FRONTEND_ORIGINS=http://localhost:5173
 ```
 
-Update the database credentials to match your local PostgreSQL configuration. The exchange-rate value is configurable and should be updated as needed.
+Update the database credentials to match your local PostgreSQL configuration.
+For local development, set `VITE_API_BASE_URL=http://localhost:5001/api` in
+the root `.env` file. The default `/api` URL is used for same-origin Netlify
+deployments.
 
 **Security:** Never commit your real `.env` file, database password, JWT secret, or API keys to GitHub. Commit a sanitized `.env.example` file instead.
 
@@ -208,7 +212,8 @@ Open PostgreSQL or your preferred SQL client and create the database:
 CREATE DATABASE shopeasy;
 ```
 
-Create the required tables and indexes using the SQL schema for your project. Ensure the `users`, `orders`, and `order_items` tables have the correct columns and relationships before running the application.
+Run `backend/sql/schema.sql` against the `shopeasy` database to create the
+required tables and indexes.
 
 ### 6. Start the backend server
 
@@ -235,6 +240,11 @@ npm run dev
 ```
 
 Open the local URL printed by Vite in your terminal, usually `http://localhost:5173`.
+
+## 🚀 Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for Netlify frontend/API and Supabase
+PostgreSQL deployment steps, including environment variables and logs.
 
 ## 🔌 API Endpoints
 

@@ -2,9 +2,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { AuthContext } from '../../context/AuthContext';
+import { API_BASE_URL } from '../../services/api';
 import './index.css';
-
-const API_URL = 'http://localhost:5001/api';
 
 const formatPrice = (amount) =>
   new Intl.NumberFormat('en-IN', {
@@ -73,7 +72,7 @@ const Profile = () => {
       try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch(`${API_URL}/orders`, {
+        const response = await fetch(`${API_BASE_URL}/orders`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

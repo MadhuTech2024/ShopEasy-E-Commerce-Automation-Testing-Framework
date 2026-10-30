@@ -1,5 +1,7 @@
 
-const API_URL = 'http://localhost:5001/api/auth';
+import { API_BASE_URL } from './api';
+
+const API_URL = `${API_BASE_URL}/auth`;
 
 async function authRequest(endpoint, body, token) {
   const headers = {
