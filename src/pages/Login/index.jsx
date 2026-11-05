@@ -112,8 +112,7 @@ try {
           type="button"
           onClick={switchToRegister}
           className="signup-link"
-        >
-          Sign Up
+        ><a href="/SignUp">Sign Up</a>    
         </button>
       </p>
     </div>
