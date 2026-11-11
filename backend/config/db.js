@@ -25,7 +25,10 @@ pool.on('connect', () => {
 })
 
 pool.on('error', (error) => {
-  console.error('Unexpected PostgreSQL error:', error.message)
+  console.error('Unexpected PostgreSQL pool error:', {
+    name: error.name,
+    code: error.code,
+  })
 })
 
 const testConnection = async () => {
@@ -34,7 +37,10 @@ const testConnection = async () => {
     console.log('Database test successful:', result.rows[0])
     return true
   } catch (error) {
-    console.error('Database connection failed:', error.message)
+    console.error('Database connection failed:', {
+      name: error.name,
+      code: error.code,
+    })
     return false
   }
 }

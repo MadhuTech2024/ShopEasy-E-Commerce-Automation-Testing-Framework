@@ -36,14 +36,19 @@
   display: grid;
 
   grid-template-columns:
-    2fr
-    1fr
-    1fr
-    1.3fr;
+    minmax(0, 2fr)
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(0, 1.3fr);
 
   gap: 55px;
 
   padding-bottom: 55px;
+}
+
+.footer-brand,
+.footer-column {
+  min-width: 0;
 }
 
 
@@ -90,6 +95,7 @@
 
 .footer-socials {
   display: flex;
+  flex-wrap: wrap;
 
   gap: 9px;
 
@@ -206,6 +212,9 @@
 ========================================= */
 
 .footer-project {
+  width: 100%;
+  min-width: 0;
+
   display: flex;
 
   align-items: center;
@@ -229,6 +238,11 @@
   margin-bottom: 30px;
 }
 
+.footer-project > div {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
 .footer-project span {
   color: #c7f000;
 
@@ -245,9 +259,11 @@
 
   font-size: 18px;
   font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 .footer-project p {
+  width: 100%;
   max-width: 650px;
 
   margin: 0;
@@ -257,13 +273,15 @@
   font-size: 12px;
 
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 
 /* Project button */
 
 .footer-project-button {
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  max-width: 100%;
 
   display: inline-flex;
 
@@ -286,6 +304,8 @@
   font-weight: 800;
 
   text-decoration: none;
+  text-align: center;
+  overflow-wrap: anywhere;
 
   transition:
     background 0.2s ease,
@@ -313,6 +333,7 @@
 
 .footer-bottom {
   display: flex;
+  flex-wrap: wrap;
 
   align-items: center;
   justify-content: space-between;
@@ -334,8 +355,14 @@
 
 .footer-bottom-links {
   display: flex;
+  flex-wrap: wrap;
 
   gap: 20px;
+}
+
+.footer-bottom p,
+.footer-bottom-links a {
+  overflow-wrap: anywhere;
 }
 
 .footer-bottom-links a {
@@ -363,7 +390,7 @@
   }
 
   .footer-main {
-    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(0, 1fr));
 
     gap: 40px;
   }
@@ -443,6 +470,7 @@
 
   .footer-project-button {
     width: 100%;
+    align-self: stretch;
   }
 
 
@@ -472,7 +500,12 @@
   }
 
   .footer-main {
-    gap: 30px 15px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 27px;
+  }
+
+  .footer-brand {
+    grid-column: 1;
   }
 
   .footer-socials a {
@@ -519,18 +552,8 @@
 ========================================= */
 
 @media (max-width: 360px) {
-  .footer-main {
-    grid-template-columns: 1fr;
-
-    gap: 27px;
-  }
-
-  .footer-brand {
-    grid-column: span 1;
-  }
-
   .footer-description {
-    max-width: 280px;
+    max-width: 100%;
   }
 
   .footer-bottom-links {
@@ -539,4 +562,3 @@
     gap: 7px;
   }
 }
-

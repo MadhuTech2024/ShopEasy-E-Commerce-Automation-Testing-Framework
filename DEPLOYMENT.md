@@ -1,76 +1,83 @@
-# Netlify and Supabase Deployment
+# ShopEasy Deployment Guide
 
-ShopEasy can deploy its Vite frontend and Express API together on Netlify.
-Netlify Functions adapt the existing Express API, while Supabase hosts
-PostgreSQL.
+ShopEasy uses Vercel for the React/Vite frontend, Render for the Express API,
+and Neon PostgreSQL for application data.
 
-## 1. Prepare Supabase
+## Render backend
 
-1. Create a Supabase project.
-2. Open the Supabase SQL Editor and run
-   [`backend/sql/schema.sql`](./backend/sql/schema.sql).
-3. In the Supabase project dashboard, get a PostgreSQL connection string.
-   For a serverless API, use the Supabase session pooler or transaction pooler
-   as appropriate for your project/network. Ensure the connection uses SSL.
-4. Keep the connection string and database password private.
+Configure the Render web service with:
 
-The schema is intended for a new/empty database. `IF NOT EXISTS` does not
-migrate or repair a pre-existing table with a different structure.
+- Root directory: `backend`
+- Build command: `npm ci`
+- Start command: `npm start`
+- Health check path: `/api/health`
 
-## 2. Deploy to Netlify
+Set these Render environment variables without committing their values:
 
-1. Push the project to a Git provider and import it into Netlify.
-2. Use the repository root as the base directory. The checked-in
-   `netlify.toml` configures `npm run build`, `dist`, Netlify Functions, API
-   routing, and the React single-page-app fallback.
-3. In the Netlify site environment variables, set:
-   - `DATABASE_URL`: the Supabase PostgreSQL connection string.
-   - `JWT_SECRET`: a long, unique, randomly generated secret.
-   - `NODE_ENV`: `production`.
-   - `DB_POOL_MAX`: `1` (optional; conservative default for serverless).
-   - `VITE_API_BASE_URL`: `/api` (optional; this is the same-origin default).
-4. Trigger a deploy. Vite embeds `VITE_API_BASE_URL` during the build, so
-   changing that variable requires a new deploy.
+- `NODE_ENV=production`
+- `DATABASE_URL`: the Neon PostgreSQL connection string, including the SSL
+  requirements provided by Neon.
+- `JWT_SECRET`: a long, unique random secret.
+- `FRONTEND_ORIGINS=https://shop-easy-e-commerce-automation-tes.vercel.app`
 
-Netlify provides `URL` and `DEPLOY_PRIME_URL` for the deployed site and deploy
-preview. The API uses those values as allowed CORS origins. If you have a
-custom domain, add its exact origin to `FRONTEND_ORIGINS`, comma-separated
-when there is more than one.
+Render supplies `PORT`. The API uses the exact frontend origin for CORS; do not
+add a trailing slash. Add other trusted origins as comma-separated values only
+when they are needed.
 
-## 3. Verify the deployment
+## Neon database
 
-- Open the Netlify site and navigate to app routes, including refreshing
-  `/products` and `/profile`.
-- Visit `/api/health`; a healthy response confirms the function can query
-  Supabase.
-- Register, log in, refresh while logged in, place an order, and view order
-  history.
-- Confirm users and orders are saved in Supabase.
-- Review Netlify function logs for server-side errors. Do not log or commit
-  database connection strings, passwords, or JWT secrets.
+The application schema is in [`backend/sql/schema.sql`](backend/sql/schema.sql).
+For a new database, apply it using the Neon SQL Editor before starting the API.
+The script uses `CREATE TABLE IF NOT EXISTS`; it does not migrate or repair
+existing tables with a different structure.
+
+The production database was previously initialized. Do not rerun schema
+changes against production unless the change has been reviewed and the
+database is backed up. For local migration work, use a separate development
+database.
+
+## Vercel frontend
+
+Configure the Vercel project to use the repository root with:
+
+- Build command: `npm run build`
+- Output directory: `dist`
+- Production environment variable:
+  `VITE_API_BASE_URL=https://shopeasy-e-commerce-automation-testing.onrender.com/api`
+
+Keep local development configuration in the root `.env` as
+`VITE_API_BASE_URL=http://localhost:5001/api`. Vite embeds this value at build
+time, so changes to the Vercel variable require a new frontend deployment.
+
+[`vercel.json`](vercel.json) provides the SPA fallback so routes such as
+`/login`, `/SignUp`, and `/products` serve the application entry point on
+direct navigation and refresh.
 
 ## Local development
 
-- Copy `.env.example` to the repository root; the frontend default uses
-  `http://localhost:5001/api` for local development. If the variable is
-  unset, the frontend uses the same-origin `/api` path configured for Netlify.
-- Copy `backend/.env.example` to `backend/.env` and set local PostgreSQL
-  credentials, or set `DATABASE_URL` to a Supabase connection string.
-- Run `backend/sql/schema.sql` against the database.
-- Install dependencies from the repository root with `npm install`.
-- Start the API with `npm --prefix backend run dev` and the frontend with
-  `npm run dev`.
+From PowerShell at the repository root:
 
-## Demo limitations
+```powershell
+npm ci
+npm --prefix backend ci
+Copy-Item .env.example .env
+Copy-Item backend\.env.example backend\.env
+npm --prefix backend run dev
+```
 
-Products are sourced from DummyJSON. The checkout currently offers a card
-selection but does not integrate a payment processor. This setup is suitable
-for a demo or portfolio deployment, not real payment processing.
+In a second terminal, run `npm run dev`. Configure local PostgreSQL connection
+values only in `backend\.env`. Never put `DATABASE_URL` or `JWT_SECRET` in a
+Vite environment file.
 
-## Deployment change record
+## Deployment verification
 
-- 2026-10-30: Added configurable frontend API URLs, hosted PostgreSQL
-  connection support, production CORS configuration, and the database schema.
-- 2026-10-30: Configured Netlify to serve the frontend and Express API through
-  a Netlify Function, added Supabase PostgreSQL connection support and schema
-  setup instructions, and documented deployment and verification steps.
+After deployment, check:
+
+- `https://shopeasy-e-commerce-automation-testing.onrender.com/api/health`
+- `https://shopeasy-e-commerce-automation-testing.onrender.com/api/auth/test`
+- The Vercel homepage and direct refreshes of `/login` and `/SignUp`
+- Registration, login, profile retrieval, cart totals, checkout, and order
+  history using a disposable account
+
+The card payment option is a placeholder and is not connected to a payment
+processor. Products are supplied by DummyJSON.

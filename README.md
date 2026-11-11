@@ -199,8 +199,7 @@ FRONTEND_ORIGINS=http://localhost:5173
 
 Update the database credentials to match your local PostgreSQL configuration.
 For local development, set `VITE_API_BASE_URL=http://localhost:5001/api` in
-the root `.env` file. The default `/api` URL is used for same-origin Netlify
-deployments.
+the root `.env` file. Production uses the Render API URL configured in Vercel.
 
 **Security:** Never commit your real `.env` file, database password, JWT secret, or API keys to GitHub. Commit a sanitized `.env.example` file instead.
 
@@ -243,8 +242,8 @@ Open the local URL printed by Vite in your terminal, usually `http://localhost:5
 
 ## 🚀 Deployment
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for Netlify frontend/API and Supabase
-PostgreSQL deployment steps, including environment variables and logs.
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for Vercel frontend, Render API, and Neon
+PostgreSQL deployment steps, including environment variables and verification.
 
 ## 🔌 API Endpoints
 

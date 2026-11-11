@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router'
 import { AuthContext } from '../../context/AuthContext'
 import { createOrderApi } from '../../services/orders'
 import { useCart } from '../../context/CartContext'
+import { formatINR } from '../../utils/currency'
 import './index.css'
 
 const Checkout = () => {
@@ -476,15 +477,14 @@ useEffect(() => {
                   <div>
                     <p>{item.name}</p>
                     <span>
-                      {item.quantity} × ${item.price}
+                      {item.quantity} × {formatINR(item.price)}
                     </span>
                   </div>
 
                   <strong>
-                    $
-                    {(
-                      Number(item.price) * item.quantity
-                    ).toFixed(2)}
+                    {formatINR(
+                      Number(item.price) * item.quantity,
+                    )}
                   </strong>
                 </div>
               ))}
@@ -494,7 +494,7 @@ useEffect(() => {
 
             <div className="checkout-total-row">
               <span>Subtotal</span>
-              <span>${Number(cartTotal).toFixed(2)}</span>
+              <span>{formatINR(cartTotal)}</span>
             </div>
 
             <div className="checkout-total-row">
@@ -506,7 +506,7 @@ useEffect(() => {
 
             <div className="checkout-final-total">
               <span>Total</span>
-              <strong>${Number(cartTotal).toFixed(2)}</strong>
+              <strong>{formatINR(cartTotal)}</strong>
             </div>
 
             {orderError && (

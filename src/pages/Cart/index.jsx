@@ -1,6 +1,7 @@
 import {Link} from 'react-router'
 
 import {useCart} from '../../context/CartContext'
+import {formatINR} from '../../utils/currency'
 
 import './index.css'
 
@@ -27,6 +28,22 @@ const Cart = () => {
               Looks like you haven't added any products
               to your cart yet.
             </p>
+
+            <div className="empty-cart-auth-actions">
+              <Link
+                to="/login"
+                className="empty-cart-auth-button"
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/signup"
+                className="empty-cart-auth-button empty-cart-signup-button"
+              >
+                Sign Up
+              </Link>
+            </div>
 
             <Link
               to="/"
@@ -87,7 +104,7 @@ const Cart = () => {
                   </Link>
 
                   <p className="cart-item-price">
-                    ${item.price}
+                    {formatINR(item.price)}
                   </p>
                 </div>
 
@@ -117,11 +134,9 @@ const Cart = () => {
                   </div>
 
                   <p className="item-total">
-                    $
-                    {(
-                      Number(item.price) *
-                      item.quantity
-                    ).toFixed(2)}
+                    {formatINR(
+                      Number(item.price) * item.quantity,
+                    )}
                   </p>
 
                   <button
@@ -162,7 +177,7 @@ const Cart = () => {
               <span>Subtotal</span>
 
               <span>
-                ${Number(cartTotal).toFixed(2)}
+                {formatINR(cartTotal)}
               </span>
             </div>
 
@@ -178,7 +193,7 @@ const Cart = () => {
               <span>Total</span>
 
               <strong>
-                ${Number(cartTotal).toFixed(2)}
+                {formatINR(cartTotal)}
               </strong>
             </div>
 

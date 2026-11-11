@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import {useProducts} from '../../context/ProductsContext'
+import {formatINR} from '../../utils/currency'
 import './index.css'
 
 const categoryData = [
@@ -265,7 +266,7 @@ const FilterSidebar = ({onClose}) => {
             <span>Price</span>
 
             <strong>
-                 ${price.toLocaleString('en-US')}
+              {formatINR(price)}
             </strong>
           </div>
 
@@ -283,8 +284,8 @@ const FilterSidebar = ({onClose}) => {
          </div>
 
 <div className="price-range-labels">
-  <span>$500</span>
-  <span>$5,000+</span>
+  <span>{formatINR(500)}</span>
+  <span>{formatINR(5000)}+</span>
 </div>
 
         {/* Rating */}

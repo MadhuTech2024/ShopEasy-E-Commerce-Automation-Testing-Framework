@@ -3,6 +3,20 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const pool = require('../config/db')
 
+const logAuthError = (operation, error) => {
+  const details = {}
+
+  if (typeof error?.name === 'string') {
+    details.name = error.name
+  }
+
+  if (typeof error?.code === 'string') {
+    details.code = error.code
+  }
+
+  console.error(`${operation} failed`, details)
+}
+
 // Generate JWT token
 const generateToken = (userId) => {
   if (!process.env.JWT_SECRET) {
@@ -71,7 +85,7 @@ const registerUser = async (req, res) => {
       user,
     })
   } catch (error) {
-    console.error('Register error:', error)
+    logAuthError('Register', error)
 
     if (error.code === '23505') {
       return res.status(409).json({
@@ -145,7 +159,7 @@ const loginUser = async (req, res) => {
       },
     })
   } catch (error) {
-    console.error('Login error:', error)
+    logAuthError('Login', error)
 
     if (error.message === 'JWT_SECRET is missing from .env') {
       return res.status(500).json({
@@ -179,7 +193,7 @@ const getMe = async (req, res) => {
       user: result.rows[0],
     })
   } catch (error) {
-    console.error('Get profile error:', error)
+    logAuthError('Get profile', error)
 
     return res.status(500).json({
       message: 'Server error while fetching profile',
