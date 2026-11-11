@@ -29,6 +29,22 @@ const Cart = () => {
               to your cart yet.
             </p>
 
+            <div className="empty-cart-auth-actions">
+              <Link
+                to="/login"
+                className="empty-cart-auth-button"
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/signup"
+                className="empty-cart-auth-button empty-cart-signup-button"
+              >
+                Sign Up
+              </Link>
+            </div>
+
             <Link
               to="/"
               className="continue-shopping-button"
