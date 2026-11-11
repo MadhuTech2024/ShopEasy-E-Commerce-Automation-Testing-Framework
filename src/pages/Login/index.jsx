@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { AuthContext } from '../../context/AuthContext';
 import './index.css';
 
@@ -108,12 +108,19 @@ try {
 
       <p className="signup-text">
         Don't have an account?{' '}
-        <button
-          type="button"
-          onClick={switchToRegister}
-          className="signup-link"
-        ><a href="/SignUp">Sign Up</a>    
-        </button>
+        {switchToRegister ? (
+          <button
+            type="button"
+            onClick={switchToRegister}
+            className="signup-link"
+          >
+            Sign Up
+          </button>
+        ) : (
+          <Link to="/signup" className="signup-link">
+            Sign Up
+          </Link>
+        )}
       </p>
     </div>
   );

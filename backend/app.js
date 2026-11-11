@@ -49,7 +49,10 @@ app.get('/api/health', async (req, res) => {
       message: 'ShopEasy API and database are healthy',
     });
   } catch (error) {
-    console.error('Health check database query failed:', error.message);
+    console.error('Health check database query failed:', {
+      name: error.name,
+      code: error.code,
+    });
     res.status(503).json({
       message: 'Database connection is unavailable',
     });
@@ -64,7 +67,10 @@ app.get('/api/db-test', async (req, res) => {
       time: result.rows[0].now,
     });
   } catch (error) {
-    console.error('Database test failed:', error.message);
+    console.error('Database test failed:', {
+      name: error.name,
+      code: error.code,
+    });
     res.status(500).json({
       message: 'Database connection failed',
     });
