@@ -1,6 +1,7 @@
 import {Link} from 'react-router'
 
 import {useCart} from '../../context/CartContext'
+import {formatINR} from '../../utils/currency'
 
 import './index.css'
 
@@ -87,7 +88,7 @@ const Cart = () => {
                   </Link>
 
                   <p className="cart-item-price">
-                    ${item.price}
+                    {formatINR(item.price)}
                   </p>
                 </div>
 
@@ -117,11 +118,9 @@ const Cart = () => {
                   </div>
 
                   <p className="item-total">
-                    $
-                    {(
-                      Number(item.price) *
-                      item.quantity
-                    ).toFixed(2)}
+                    {formatINR(
+                      Number(item.price) * item.quantity,
+                    )}
                   </p>
 
                   <button
@@ -162,7 +161,7 @@ const Cart = () => {
               <span>Subtotal</span>
 
               <span>
-                ${Number(cartTotal).toFixed(2)}
+                {formatINR(cartTotal)}
               </span>
             </div>
 
@@ -178,7 +177,7 @@ const Cart = () => {
               <span>Total</span>
 
               <strong>
-                ${Number(cartTotal).toFixed(2)}
+                {formatINR(cartTotal)}
               </strong>
             </div>
 

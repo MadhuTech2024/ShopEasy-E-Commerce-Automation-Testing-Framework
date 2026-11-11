@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import {Link, useParams} from 'react-router'
 import {useCart} from '../../context/CartContext'
-import { formatUsdAsInr } from '../../utils/currency';
+import {formatINR} from '../../utils/currency'
 
 import {useProducts} from '../../context/ProductsContext'
 import {getProductById} from '../../services/productService'
@@ -175,7 +175,7 @@ const ProductDetails = () => {
 
             <div className="details-price-section">
               <span className="details-price">
-                {formatUsdAsInr(product.price)}
+                {formatINR(product.price)}
               </span>
 
               {product.discountPercentage > 0 && (
