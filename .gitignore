@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-node_modules/
-.env
-=======
-
 node_modules/
 .env
 .env.*
 !.env.example
 dist/
 .netlify/
->>>>>>> 6eb32da11a600d6dcfe55ab8159e38f9514dedee
