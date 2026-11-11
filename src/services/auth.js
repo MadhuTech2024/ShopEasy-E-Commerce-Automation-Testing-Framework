@@ -12,18 +12,33 @@ async function authRequest(endpoint, body, token) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    method: body ? 'POST' : 'GET',
-    headers,
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
+  let response;
+
+  try {
+    response = await fetch(`${API_URL}${endpoint}`, {
+      method: body ? 'POST' : 'GET',
+      headers,
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+  } catch (error) {
+    console.error('Authentication request could not reach the API:', {
+      endpoint,
+      errorName: error instanceof Error ? error.name : 'UnknownError',
+    });
+    throw new Error(
+      'Unable to reach the authentication service. Check your connection and try again.',
+      { cause: error },
+    );
+  }
 
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(
+    const requestError = new Error(
       data.message || `Request failed (${response.status})`
     );
+    requestError.status = response.status;
+    throw requestError;
   }
 
   return data;
